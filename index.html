@@ -32,9 +32,45 @@
             <h1 align="center">Запись данных в Blockchain с помощью Infura</h1>
         </div>
         <div class="card-body">
-			<div id="valueTime"></div>
-			</div>
-			</div>
+            <div class="row">
+                <div class="col-md-6 col-sm-6 col-lg-6">
+                    <div class="card" style="width: 18rem;">
+                        <div class="card-body">
+                            <p>Here you can buy tokens</p>
+                            <p class="card-text">
+
+                                <input id="amountEth" class="form-control-sm" name="amountEth" value="" type="text" placeholder="Input ETH">
+                            <p>Please enter the amount of ETH</p>
+                            <span> &nbsp;&nbsp; </span>
+                            <p></p>
+                            <button class="btn btn-primary btn-sm" id="byTokens" onclick="buyMyTokens();">Buy FTT</button>
+                            <p></p>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-sm-6 col-lg-6">
+                    <div class="card" style="width: 18rem;">
+                        <div class="card-body">
+                            <p>Here you can claim tokens</p>
+                            <p class="card-text">
+
+                                <span> &nbsp;&nbsp; </span>
+                            <p></p>
+                            <button class="btn btn-primary btn-sm" id="claimTokens" onclick="claimTokens();">Claim token</button>
+                            <p></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+<br><br>
+            <div>
+                <p>Номер текущей транзакции: <strong id="numberTranzaction"></strong> </p>
+            </div>
+            <div>
+                <strong id="errorTranzaction"></strong>
+            </div>
         </div>
     </div>
 
