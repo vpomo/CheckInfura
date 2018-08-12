@@ -1,0 +1,6 @@
+ethereumjs-tx@1.3.3
+web3@0.20.6
+
+npm view web3 versions
+
+npm view ethereumjs-tx versions
