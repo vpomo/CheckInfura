@@ -4,3 +4,5 @@ web3@0.20.6
 npm view web3 versions
 
 npm view ethereumjs-tx versions
+
+npm install pg-promise
