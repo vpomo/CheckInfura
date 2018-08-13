@@ -1,10 +1,9 @@
+var postgres = require("./postgre");
+
 var fs = require('fs');
 var parse = require('csv-parse');
-var resultParse;
 
-module.exports.result = resultParse;
-
-module.exports.readCsvFile = function (nameFile) {
+module.exports.readCsvFile = function (nameFile, idTask) {
     var csvData = [];
     fs.createReadStream(nameFile)
         .pipe(parse({delimiter: ','}))
@@ -16,10 +15,8 @@ module.exports.readCsvFile = function (nameFile) {
         .on('end', function () {
             //do something wiht csvData
             //console.log(csvData);
+            postgres.putCsvFromFile(csvData,idTask);
+
             resultParse = csvData;
         });
-}
-
-module.exports.rr = function () {
-    return resultParse;
 }

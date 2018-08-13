@@ -1,0 +1,17 @@
+https://stackoverflow.com/questions/787722/postgresql-autoincrement
+
+
+CREATE SEQUENCE transfer_history_id_seq;
+ALTER TABLE transfer_history ALTER id SET DEFAULT NEXTVAL('transfer_history_id_seq');
+
+CREATE SEQUENCE id_wallets_seq;
+ALTER TABLE wallets ALTER id_wallets SET DEFAULT NEXTVAL('id_wallets_seq');
+
+CREATE SEQUENCE id_task_history_seq;
+ALTER TABLE task_history ALTER id_task_history SET DEFAULT NEXTVAL('id_task_history_seq');
+
+CREATE SEQUENCE id_task_data_seq;
+ALTER TABLE task_data ALTER id_task_data SET DEFAULT NEXTVAL('id_task_data_seq');
+
+
+

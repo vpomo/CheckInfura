@@ -6,3 +6,7 @@ npm view web3 versions
 npm view ethereumjs-tx versions
 
 npm install pg-promise
+npm install big-number
+
+
+https://github.com/garethflowers/postgresql-portable/releases/

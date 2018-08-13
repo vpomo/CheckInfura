@@ -328,7 +328,7 @@ var abi = [{
     "type": "event"
 }];
 
-var contract = web3.eth.contract(abi).at(contractAddress);
+contract = web3.eth.contract(abi).at(contractAddress);
 
 var myWallet = '0x5a204d1ca98e8de8566b20951e55f9d710e65947';
 var myPrivateKey = 'ED4F8ECCC108FAEED0BFEBEA1CE81FEF66E58AF7A236A72A556CCBF924BD9285';
@@ -344,12 +344,10 @@ else
     console.log("connected");
 web3.eth.defaultAccount = web3.eth.accounts[0];
 
-console.log("balance of myWallet = " + web3.fromWei(web3.eth.getBalance(myWallet), "ether"));
-console.log("Number token of myWallet = " + contract.balanceOf.call(myWallet));
-//console.log("currentChainId = " + currentChainId);
 //claimTokens();
-buyMyTokens();
+//buyMyTokens();
 
+/*
 function claimTokens() {
     console.log("myWallet = " + myWallet);
     var nonce = web3.eth.getTransactionCount(myWallet);
@@ -378,7 +376,9 @@ function claimTokens() {
         }
     });
 }
+*/
 
+/*
 function buyMyTokens() {
     console.log("myWallet = " + myWallet);
     var sendEth = 0.1 * decimalToken;
@@ -407,4 +407,19 @@ function buyMyTokens() {
             console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         }
     });
-}
+*/
+
+    module.exports.balanceOfToken = function (myWalletFunc) {
+        var balanceToken = contract.balanceOf.call(myWalletFunc);
+        console.log("balanceToken = " + balanceToken);
+        return balanceToken;
+    }
+
+
+    module.exports.balanceOfEther = function (myWalletFunc) {
+        var balanceEther = web3.fromWei(web3.eth.getBalance(myWalletFunc), "ether");
+        console.log("balanceEther = " + balanceEther);
+        return balanceEther;
+    }
+
+
