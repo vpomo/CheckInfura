@@ -1,15 +1,14 @@
 //https://github.com/vitaly-t/pg-promise/wiki/Learn-by-Example#simple-select
 //https://rage.mp/forums/topic/202-%D1%80%D0%B0%D0%B1%D0%BE%D1%82%D0%B0%D0%B5%D0%BC-%D1%81-postgresql/
-var BigNumber = require('big-number');
 var pgp = require("pg-promise")(/*options*/);
-const cn = {
+const config = {
     host: 'localhost',
-    port: 5439,
+    port: 5432,
     database: 'tokendb',
     user: 'token',
     password: 'rfhnjafy'
 };
-var db = pgp(cn);
+var db = pgp(config);
 var sizePackage = 40;
 
 module.exports.putCsvFromFile = function (csvData, idTask) {
@@ -42,9 +41,10 @@ module.exports.putCsvFromFile = function (csvData, idTask) {
     });
 }
 
-module.exports.getCsvFromDB = function (idTask) {
-    console.log("Get data csv-file from DB ...");
+module.exports.getCsvFromDB = async function (idTask) {
     var result;
+    console.log("Get data csv-file from DB ...");
+    await
     db.any("select from_csv from task_data where id_task = $1", [idTask])
         .then(data => {
         //console.log(data); //
@@ -55,6 +55,48 @@ module.exports.getCsvFromDB = function (idTask) {
     });
     return result;
 }
+
+module.exports.putTransferHistory = function (amountTokens, numberTime, idTask, csvData) {
+    console.log("Put transfer_history ...");
+    db.any("INSERT INTO transfer_history(sended_tokens, number_time, id_task, time_transfer, sended_addresses) VALUES($1, $2, $3, $4, $5)",
+        [amountTokens, numberTime, idTask, new Date(), 	csvData])
+    .then(data => {
+        console.log(data.id_task_data); //
+    })
+    .catch(error => {
+            console.log('ERROR:', error); // print error;
+    });
+}
+
+module.exports.getCountTimes  = async function(idTask) {
+        var result;
+        console.log("Count task times ...");
+        await
+        db.any("SELECT COUNT(*) FROM transfer_history where id_task = $1", [idTask])
+            .then(data => {
+            console.log(data); //
+            result = data;
+        })
+            .catch(error => {
+            console.log('ERROR:', error); // print error;
+        });
+        return result;
+};
+
+module.exports.getTask  = async function(idTask) {
+    console.log("Get sending tokens ...");
+    var result;
+    await
+    db.any("SELECT from_csv, id_task, put_date, all_number_times, count_address, amount_token FROM task_data where id_task = $1", [idTask])
+        .then(data => {
+        result = data;
+    })
+    .catch(error => {
+            console.log('ERROR:', error); // print error;
+    });
+    return result;
+};
+
 
 /*
 
@@ -113,12 +155,19 @@ function roundLessToPackage(num) {
 }
 
 function getAmountTokens(fromCsv) {
-    var result = new BigNumber(0);
-    for (var i = 0; i < fromCsv.length; i++) {
-        result = result.plus(fromCsv[i][1]);
-        console.log("result = " + result);
+    var result = Number('0.0').toFixed(18);
+    for (var i = 1; i < Number(fromCsv.length); i++) {
+        result = sum(result,Number(fromCsv[i][1])).toFixed(18);
     }
-    console.log("amount tokens = " + result);
+    console.log("amount of tokens = " + result);
 
-    return result.toFixed(18);
+    return result;
+}
+
+function sum() {
+    var result = 0;
+    for (var i = 0, max = arguments.length; i< max; i++ ) {
+        result += arguments[i]*10;
+    }
+    return result / 10;
 }

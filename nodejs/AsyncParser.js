@@ -1,4 +1,4 @@
-var postgres = require("./postgre");
+var postgres = require("./Postgre");
 
 var fs = require('fs');
 var parse = require('csv-parse');

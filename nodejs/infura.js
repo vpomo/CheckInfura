@@ -421,5 +421,3 @@ function buyMyTokens() {
         console.log("balanceEther = " + balanceEther);
         return balanceEther;
     }
-
-
