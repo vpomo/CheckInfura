@@ -1,13 +1,15 @@
 var postgres = require("./Postgre");
+var infura = require("./Infura");
 
-
-module.exports.batchTransfer = async function(idTask) {
+module.exports.batchTransfer = async function(idTask, myWallet) {
     console.log("Run batch transfering ...");
     var paramsTask = await postgres.getTask(idTask);
     var allTokens = Number(paramsTask[0].amount_token).toFixed(18);
     var numberTimes = Number(paramsTask[0].all_number_times);
 
-    console.log("allTokens = " + allTokens + " numberTimes = " + numberTimes);
+    var walletTokens = infura.balanceOfToken(myWallet);
+
+    console.log("allTokens = " + allTokens + " numberTimes = " + numberTimes + " walletTokens = " + walletTokens);
 
 
     var csvFromDb = await postgres.getCsvFromDB(idTask);
