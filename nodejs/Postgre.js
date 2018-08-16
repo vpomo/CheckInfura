@@ -9,9 +9,8 @@ const config = {
     password: 'rfhnjafy'
 };
 var db = pgp(config);
-var sizePackage = 40;
 
-module.exports.putCsvFromFile = function (csvData, idTask) {
+module.exports.putCsvFromFile = async function (csvData, idTask, sizePackage) {
     var currentDate = new Date();
     var numberTimes;
     var remain;
@@ -22,19 +21,19 @@ module.exports.putCsvFromFile = function (csvData, idTask) {
 
     console.log("Put data from csv-file ...");
     fromCsv = csvData;
-    numberTimes = roundLessToPackage(fromCsv.length) / sizePackage;
-    remain = csvData.length - roundLessToPackage(fromCsv.length);
-    realNumberTimes = 0;
+    numberTimes = roundLessToPackage(fromCsv.length, sizePackage) / sizePackage;
+    remain = csvData.length - roundLessToPackage(fromCsv.length, sizePackage);
+    realNumberTimes = Number(0);
     if (remain > 0) {
-        realNumberTimes = numberTimes + 1;
+        realNumberTimes = Number(numberTimes) + 1;
     } else {
-        realNumberTimes = numberTimes;
+        realNumberTimes = Number(numberTimes);
     }
-
-    db.any("INSERT INTO task_data(from_csv, id_task, put_date, all_number_times, count_address, amount_token) VALUES($1, $2, $3, $4, $5, $6)", [csvData, idTask,
-        currentDate, realNumberTimes, 	csvData.length, sentTokens])
+    await
+    db.any("INSERT INTO task_data(from_csv, id_task, put_date, number_times, count_address, amount_token, active_task, real_number_times, remain_token) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9)",
+        [JSON.stringify(csvData), idTask, currentDate, numberTimes, csvData.length, sentTokens, false, realNumberTimes, remain])
         .then(data => {
-        console.log(data.id_task_data); //
+        //console.log(data.id_task_data); //
     })
     .catch(error => {
         console.log('ERROR:', error); // print error;
@@ -56,10 +55,10 @@ module.exports.getCsvFromDB = async function (idTask) {
     return result;
 }
 
-module.exports.putTransferHistory = function (amountTokens, numberTime, idTask, csvData) {
+module.exports.putTransferHistory = function (amountTokens, numberTimes, idTask, csvData) {
     console.log("Put transfer_history ...");
-    db.any("INSERT INTO transfer_history(sended_tokens, number_time, id_task, time_transfer, sended_addresses) VALUES($1, $2, $3, $4, $5)",
-        [amountTokens, numberTime, idTask, new Date(), 	csvData])
+    db.any("INSERT INTO transfer_history(sended_tokens, number_times, id_task, time_transfer, sended_addresses) VALUES($1, $2, $3, $4, $5)",
+        [amountTokens, numberTimes, idTask, new Date(), 	csvData])
     .then(data => {
         console.log(data.id_task_data); //
     })
@@ -74,7 +73,6 @@ module.exports.getCountTimes  = async function(idTask) {
         await
         db.any("SELECT COUNT(*) FROM transfer_history where id_task = $1", [idTask])
             .then(data => {
-            console.log(data); //
             result = data;
         })
             .catch(error => {
@@ -87,7 +85,7 @@ module.exports.getTask  = async function(idTask) {
     console.log("Get sending tokens ...");
     var result;
     await
-    db.any("SELECT from_csv, id_task, put_date, all_number_times, count_address, amount_token FROM task_data where id_task = $1", [idTask])
+    db.any("SELECT from_csv, id_task, put_date, number_times, real_number_times, count_address, amount_token, active_task, remain_token FROM task_data where id_task = $1", [idTask])
         .then(data => {
         result = data;
     })
@@ -150,14 +148,14 @@ db.result('DELETE FROM users WHERE name = $1', ["vasya"], r => r.rowCount)
     // data = number of rows that were deleted
 });*/
 
-function roundLessToPackage(num) {
-    return Math.floor(num / sizePackage) * sizePackage;
+function roundLessToPackage(num, sizePackage) {
+    return Math.floor(num / sizePackage) * sizePackage;;
 }
 
 function getAmountTokens(fromCsv) {
     var result = Number('0.0').toFixed(18);
-    for (var i = 1; i < Number(fromCsv.length); i++) {
-        result = sum(result,Number(fromCsv[i][1])).toFixed(18);
+    for (var i = 0; i < Number(fromCsv.length); i++) {
+        result = sum(result,Number(fromCsv[i].value)).toFixed(18);
     }
     console.log("amount of tokens = " + result);
 

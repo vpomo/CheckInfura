@@ -343,6 +343,7 @@ if (!web3.isConnected())
 else
     console.log("connected");
 web3.eth.defaultAccount = web3.eth.accounts[0];
+console.log("Number token of myWallet = " + contract.balanceOf.call(myWallet));
 
 //claimTokens();
 //buyMyTokens();
@@ -410,9 +411,9 @@ function buyMyTokens() {
 */
 
     module.exports.balanceOfToken = function (myWalletFunc) {
-        var balanceToken = contract.balanceOf.call(myWalletFunc);
-        console.log("balanceToken = " + balanceToken);
-        return balanceToken;
+        var balanceToken = contract.balanceOf.call(myWalletFunc)/decimalToken;
+        console.log("balanceToken = " + balanceToken.toFixed(18));
+        return balanceToken.toFixed(18);
     }
 
 
