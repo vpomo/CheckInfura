@@ -95,6 +95,20 @@ module.exports.getTask  = async function(idTask) {
     return result;
 };
 
+module.exports.deleteTrasferHistory  = async function(idTask) {
+    var result;
+    console.log("Delete transfer history ...");
+    await
+    db.any("DELETE FROM transfer_history where id_task = $1", [idTask])
+        .then(data => {
+        result = data;
+    })
+    .catch(error => {
+            console.log('ERROR:', error); // print error;
+    });
+    return result;
+};
+
 
 /*
 

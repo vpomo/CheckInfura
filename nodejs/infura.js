@@ -343,10 +343,10 @@ if (!web3.isConnected())
 else
     console.log("connected");
 web3.eth.defaultAccount = web3.eth.accounts[0];
-console.log("Number token of myWallet = " + contract.balanceOf.call(myWallet));
 
 //claimTokens();
 //buyMyTokens();
+
 
 /*
 function claimTokens() {
@@ -378,6 +378,7 @@ function claimTokens() {
     });
 }
 */
+
 
 /*
 function buyMyTokens() {
@@ -422,3 +423,35 @@ function buyMyTokens() {
         console.log("balanceEther = " + balanceEther);
         return balanceEther;
     }
+
+module.exports.sendToken = async function (myWalletFunc) {
+    //console.log("myWallet = " + myWallet);
+    var nonce = web3.eth.getTransactionCount(myWallet);
+    var gasPriced = web3.eth.gasPrice.toNumber() * 1.40;
+    const rawTransaction = {
+        from: myWallet,
+        to: contractAddress,
+        nonce: web3.toHex(web3.eth.getTransactionCount(myWallet)),
+        gasPrice: web3.toHex(gasPriceGwei),
+        gasLimit: web3.toHex(gasLimit),
+        value: 0,
+        data: contract.claim.getData({from: myWallet})
+    };
+
+    let privateKey = new Buffer(myPrivateKey, 'hex');
+    var tx = new Tx(rawTransaction);
+    tx.sign(privateKey);
+    console.log("Validation:", tx.validate());
+
+    var serializedTx = '0x' + tx.serialize().toString('hex');
+    var result;
+    web3.eth.sendRawTransaction(serializedTx,(err, hash) => {
+        if (!err) {
+            console.log('hash:', hash);
+            console.log(web3.eth.getTransaction(hash));
+        } else {
+            console.log('err:', err);
+        }
+
+    });
+}

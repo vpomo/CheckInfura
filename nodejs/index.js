@@ -19,13 +19,8 @@ var decimalToken = 1e18;
 (async () => {
     //var fromFile = await fp.readFile("./distribution.csv", idTask, sizePackage);
 
-    /*
-    var res = await postgres.getCountTimes(idTask);
-    var countTransfers = JSON.stringify(res);
-    console.log("res = " + JSON.stringify(res) + "  count = " + );
-    console.log('Ron once said,');
-*/
-    var result = await processTransfer.batchTransfer(idTask, myWallet, sizePackage);
+    await postgres.deleteTrasferHistory(idTask);
+    var result = await processTransfer.batchTransfer(idTask, myWallet, sizePackage, decimalToken);
     //console.log("result transfer = " + result)
 
 })();
