@@ -38,14 +38,13 @@ module.exports.batchTransfer = async function(idTask, myWallet, sizePackage, dec
             currentArrayAddresses = convertCsvToAddress(step * sizePackage, sizePackage, csvJson);
             //console.log("currentArrayAddresses = " + currentArrayAddresses);
             currentArrayValues = convertCsvToValue(step * sizePackage, sizePackage, csvJson, decimalToken);
-            resultSending = await infura.sendToken(myWallet);
+            resultSending = await infura.sendToken(myWallet, step, idTask);
             console.log("resultSending = " + resultSending);
 /*
             contract.batchTransfer(convertCsvToAddress(step*sizePackage, sizePackage),convertCsvToValue(step*sizePackage, sizePackage), function(error, data) {
                 console.log("data = " + data);
             });
 */
-            await postgres.putTransferHistory(100, numberTimes, idTask, currentArrayAddresses);
             current_progress = ((step + 1) * sizePackage / csvJson.length) * 10;
             setProgressCount(current_progress);
             step++;
@@ -56,7 +55,7 @@ module.exports.batchTransfer = async function(idTask, myWallet, sizePackage, dec
             currentArrayAddresses = convertCsvToAddress(numberTimes * sizePackage, remainToken, csvJson);
             //console.log("currentArrayAddresses = " + currentArrayAddresses);
             currentArrayValues = convertCsvToValue(numberTimes * sizePackage, remainToken, csvJson, decimalToken);
-            resultSending = await infura.sendToken(myWallet);
+            resultSending = await infura.sendToken(myWallet, step, idTask);
             console.log("resultSending = " + resultSending);
             //console.log("currentArrayValues = " + currentArrayValues);
 /*
@@ -64,7 +63,6 @@ module.exports.batchTransfer = async function(idTask, myWallet, sizePackage, dec
                 console.log("data = " + data);
             });
 */
-            await postgres.putTransferHistory(100, numberTimes, idTask, currentArrayAddresses);
             current_progress = 100;
             setProgressCount(current_progress);
         }

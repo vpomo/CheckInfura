@@ -55,10 +55,38 @@ module.exports.getCsvFromDB = async function (idTask) {
     return result;
 }
 
-module.exports.putTransferHistory = function (amountTokens, numberTimes, idTask, csvData) {
+module.exports.setPendingTask = async function (idTask, status) {
+    var result;
+    console.log("Update pending status ...");
+    await
+    db.any("UPDATE task_data set pending_transaction = $2 where id_task = $1", [idTask, status])
+        .then(data => {
+        })
+        .catch(error => {
+                console.log('ERROR:', error); // print error;
+        });
+}
+
+module.exports.getPendingStatus = async function (idTask) {
+    var result;
+    console.log("Get pending status ...");
+    await
+    db.any("select pending_transaction from task_data where id_task = $1", [idTask])
+        .then(data => {
+        //console.log(data); //
+        result = data[0].pending_transaction;
+    })
+    .catch(error => {
+            console.log('ERROR:', error); // print error;
+    });
+    console.log("Result pending status = " + result);
+    return result;
+}
+
+module.exports.putTransferHistory = function (amountTokens, numberTimes, idTask, thHash) {
     console.log("Put transfer_history ...");
-    db.any("INSERT INTO transfer_history(sended_tokens, number_times, id_task, time_transfer, sended_addresses) VALUES($1, $2, $3, $4, $5)",
-        [amountTokens, numberTimes, idTask, new Date(), 	csvData])
+    db.any("INSERT INTO transfer_history(sended_tokens, number_times, id_task, time_transfer, th_hash) VALUES($1, $2, $3, $4, $5)",
+        [amountTokens, numberTimes, idTask, new Date(), 	thHash])
     .then(data => {
         console.log(data.id_task_data); //
     })
