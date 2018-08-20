@@ -55,11 +55,12 @@ module.exports.getCsvFromDB = async function (idTask) {
     return result;
 }
 
-module.exports.setPendingTask = async function (idTask, status) {
+module.exports.setPendingStatusTask = async function (idTask, txHash) {
     var result;
     console.log("Update pending status ...");
+    console.log("txHash = " + txHash);
     await
-    db.any("UPDATE task_data set pending_transaction = $2 where id_task = $1", [idTask, status])
+    db.any("UPDATE task_data set current_tx_hash = $2 where id_task = $1", [idTask, txHash])
         .then(data => {
         })
         .catch(error => {
@@ -67,14 +68,14 @@ module.exports.setPendingTask = async function (idTask, status) {
         });
 }
 
-module.exports.getPendingStatus = async function (idTask) {
+module.exports.getPendingStatusTask = async function (idTask) {
     var result;
     console.log("Get pending status ...");
     await
-    db.any("select pending_transaction from task_data where id_task = $1", [idTask])
+    db.any("select current_tx_hash from task_data where id_task = $1", [idTask])
         .then(data => {
         //console.log(data); //
-        result = data[0].pending_transaction;
+        result = data[0].current_tx_hash;
     })
     .catch(error => {
             console.log('ERROR:', error); // print error;

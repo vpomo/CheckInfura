@@ -1,6 +1,8 @@
 const Web3 = require('web3');
 const web3 = new Web3();
 const Tx = require('ethereumjs-tx');
+var postgres = require("./Postgre");
+
 
 var contractAddress = '0x4627dcb7f14b92d1866e421d9ad954cdd997b43f';
 var abi = [{
@@ -424,7 +426,7 @@ function buyMyTokens() {
         return balanceEther;
     }
 
-module.exports.sendToken = async function (myWalletFunc) {
+module.exports.sendToken = async function (myWalletFunc, step, idTask) {
     //console.log("myWallet = " + myWallet);
     var nonce = web3.eth.getTransactionCount(myWallet);
     var gasPriced = web3.eth.gasPrice.toNumber() * 1.40;
@@ -444,14 +446,46 @@ module.exports.sendToken = async function (myWalletFunc) {
     console.log("Validation:", tx.validate());
 
     var serializedTx = '0x' + tx.serialize().toString('hex');
-    var result;
-    web3.eth.sendRawTransaction(serializedTx,(err, hash) => {
-        if (!err) {
+    var isPending;
+    var txHash = await postgres.getPendingStatusTask(idTask);
+    console.log("txHash = " + txHash);
+    if (txHash == undefined) {
+        web3.eth.sendRawTransaction(serializedTx,async (err, hash) => {
+            if (!err) {
             console.log('hash:', hash);
-            console.log(web3.eth.getTransaction(hash));
+            await postgres.setPendingStatusTask(idTask, hash);
+            await postgres.putTransferHistory(1000, step, idTask, hash);
+            sleep(2000);
+            } else {
+                console.log('err:', err.Error);
+            }
+        });
         } else {
-            console.log('err:', err);
+        isPending = checkTransaction(txHash);
+        sleep(2000);
+        if (!isPending) {
+            await postgres.setPendingStatusTask(idTask, null);
         }
+    }
+}
 
-    });
+function checkTransaction(txHash) {
+        //txHash = '0xfcc491adf4c67c36c1f95be4b202632b911b6065d17e2579854e6ed7820aeb29';
+    console.log("Checking transaction ...");
+    var result = web3.toHex(web3.eth.getTransaction(txHash));
+    console.log("checkTransaction = " + JSON.stringify(result));
+    if (result.blockHash == "0x0000000000000000000000000000000000000000000000000000000000000000"){
+        return false;
+    } else {
+        return true;
+    }
+}
+
+function sleep(milliseconds) {
+    var start = new Date().getTime();
+    for (var i = 0; i < 1e7; i++) {
+        if ((new Date().getTime() - start) > milliseconds){
+            break;
+        }
+    }
 }

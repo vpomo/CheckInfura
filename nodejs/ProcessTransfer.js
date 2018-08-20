@@ -34,20 +34,23 @@ module.exports.batchTransfer = async function(idTask, myWallet, sizePackage, dec
         }
 
         if (step < numberTimes) {
-            console.log("step*sizePackage=" + step * sizePackage + " sizePackage" + sizePackage);
-            currentArrayAddresses = convertCsvToAddress(step * sizePackage, sizePackage, csvJson);
-            //console.log("currentArrayAddresses = " + currentArrayAddresses);
-            currentArrayValues = convertCsvToValue(step * sizePackage, sizePackage, csvJson, decimalToken);
-            resultSending = await infura.sendToken(myWallet, step, idTask);
-            console.log("resultSending = " + resultSending);
 /*
             contract.batchTransfer(convertCsvToAddress(step*sizePackage, sizePackage),convertCsvToValue(step*sizePackage, sizePackage), function(error, data) {
                 console.log("data = " + data);
             });
 */
-            current_progress = ((step + 1) * sizePackage / csvJson.length) * 10;
-            setProgressCount(current_progress);
-            step++;
+            resultSending = await postgres.getPendingStatusTask(idTask);
+            console.log("resultSending = " + resultSending);
+            if (resultSending == null ) {
+                console.log("step*sizePackage=" + step * sizePackage + " sizePackage" + sizePackage);
+                currentArrayAddresses = convertCsvToAddress(step * sizePackage, sizePackage, csvJson);
+                currentArrayValues = convertCsvToValue(step * sizePackage, sizePackage, csvJson, decimalToken);
+                await infura.sendToken(myWallet, step, idTask);
+                current_progress = ((step + 1) * sizePackage / csvJson.length) * 10;
+                setProgressCount(current_progress);
+
+                step++;
+            }
         }
 
         if (realNumberTimes > numberTimes && step == numberTimes + 1) {
