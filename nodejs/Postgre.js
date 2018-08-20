@@ -111,7 +111,7 @@ module.exports.getCountTimes  = async function(idTask) {
 };
 
 module.exports.getTask  = async function(idTask) {
-    console.log("Get sending tokens ...");
+    console.log("Get task ...");
     var result;
     await
     db.any("SELECT from_csv, id_task, put_date, number_times, real_number_times, count_address, amount_token, active_task, remain_token FROM task_data where id_task = $1", [idTask])

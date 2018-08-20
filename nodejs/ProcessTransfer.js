@@ -71,6 +71,7 @@ module.exports.batchTransfer = async function(idTask, myWallet, sizePackage, dec
         }
         paramsTask = await postgres.getTask(idTask);
         activeTask = paramsTask[0].active_task;
+        sleep(2000);
     }
     return true;
 };
@@ -104,5 +105,14 @@ function setProgressCount(countProgress) {
     console.log("countProgress = " + countProgress.toFixed(2));
     if (countProgress > 99.999) {
         console.log("countProgress = done !!!");
+    }
+}
+
+function sleep(milliseconds) {
+    var start = new Date().getTime();
+    for (var i = 0; i < 1e7; i++) {
+        if ((new Date().getTime() - start) > milliseconds){
+            break;
+        }
     }
 }
