@@ -413,70 +413,71 @@ function buyMyTokens() {
     });
 */
 
-    module.exports.balanceOfToken = function (myWalletFunc) {
-        var balanceToken = contract.balanceOf.call(myWalletFunc)/decimalToken;
-        console.log("balanceToken = " + balanceToken.toFixed(18));
-        return balanceToken.toFixed(18);
-    }
+module.exports.balanceOfToken = function (myWalletFunc) {
+    var balanceToken = contract.balanceOf.call(myWalletFunc) / decimalToken;
+    console.log("balanceToken = " + balanceToken.toFixed(18));
+    return balanceToken.toFixed(18);
+}
 
 
-    module.exports.balanceOfEther = function (myWalletFunc) {
-        var balanceEther = web3.fromWei(web3.eth.getBalance(myWalletFunc), "ether");
-        console.log("balanceEther = " + balanceEther);
-        return balanceEther;
-    }
+module.exports.balanceOfEther = function (myWalletFunc) {
+    var balanceEther = web3.fromWei(web3.eth.getBalance(myWalletFunc), "ether");
+    console.log("balanceEther = " + balanceEther);
+    return balanceEther;
+}
 
-module.exports.sendToken = async function (myWalletFunc, step, idTask) {
-    //console.log("myWallet = " + myWallet);
-    var nonce = web3.eth.getTransactionCount(myWallet);
-    var gasPriced = web3.eth.gasPrice.toNumber() * 1.40;
-    const rawTransaction = {
-        from: myWallet,
-        to: contractAddress,
-        nonce: web3.toHex(web3.eth.getTransactionCount(myWallet)),
-        gasPrice: web3.toHex(gasPriceGwei),
-        gasLimit: web3.toHex(gasLimit),
-        value: 0,
-        data: contract.claim.getData({from: myWallet})
-    };
-
-    let privateKey = new Buffer(myPrivateKey, 'hex');
-    var tx = new Tx(rawTransaction);
-    tx.sign(privateKey);
-    console.log("Validation:", tx.validate());
-
-    var serializedTx = '0x' + tx.serialize().toString('hex');
-    var isPending;
-    var txHash = await postgres.getPendingStatusTask(idTask);
-    console.log("txHash = " + txHash);
+module.exports.sendToken = async function (myWalletFunc, step, idTask, currentArrayAddresses) {
+    var txHash = await
+    postgres.getPendingStatusTask(idTask);
     if (txHash == undefined) {
-        web3.eth.sendRawTransaction(serializedTx,async (err, hash) => {
+        //var nonce = web3.eth.getTransactionCount(myWallet);
+        //var gasPriced = web3.eth.gasPrice.toNumber() * 1.40;
+        const rawTransaction = {
+            from: myWallet,
+            to: contractAddress,
+            nonce: web3.toHex(web3.eth.getTransactionCount(myWallet)),
+            gasPrice: web3.toHex(gasPriceGwei),
+            gasLimit: web3.toHex(gasLimit),
+            value: 0,
+            data: contract.claim.getData({from: myWallet})
+        };
+
+        let privateKey = new Buffer(myPrivateKey, 'hex');
+        var tx = new Tx(rawTransaction);
+        tx.sign(privateKey);
+        console.log("Validation:", tx.validate());
+
+        var serializedTx = '0x' + tx.serialize().toString('hex');
+
+        web3.eth.sendRawTransaction(serializedTx, async (err, hash) => {
             if (!err) {
             console.log('hash:', hash);
-            await postgres.setPendingStatusTask(idTask, hash);
-            await postgres.putTransferHistory(1000, step, idTask, hash);
+            await
+            postgres.setPendingStatusTask(idTask, hash);
+            await
+            postgres.putTransferHistory(currentArrayAddresses, step, idTask, hash);
             sleep(2000);
-            } else {
-                console.log('err:', err.Error);
+            }
+            else {
+                //console.log('err:', err.Error);
             }
         });
-        } else {
-        isPending = checkTransaction(txHash);
-        sleep(2000);
+    } else {
+        var isPending = isPendingTransaction(txHash);
         if (!isPending) {
-            await postgres.setPendingStatusTask(idTask, null);
+            await
+            postgres.setPendingStatusTask(idTask, null);
+            sleep(2000);
         }
     }
 }
 
-function checkTransaction(txHash) {
-        //txHash = '0xfcc491adf4c67c36c1f95be4b202632b911b6065d17e2579854e6ed7820aeb29';
-    console.log("Checking transaction ...");
+function isPendingTransaction(txHash) {
     var result = web3.toHex(web3.eth.getTransaction(txHash));
-    console.log("checkTransaction = " + JSON.stringify(result));
-    if (result.blockHash == "0x0000000000000000000000000000000000000000000000000000000000000000"){
+    if (result.blockNumber == undefined) {
         return false;
     } else {
+        console.log("result.blockNumber = " + result.blockNumber);
         return true;
     }
 }
@@ -484,7 +485,7 @@ function checkTransaction(txHash) {
 function sleep(milliseconds) {
     var start = new Date().getTime();
     for (var i = 0; i < 1e7; i++) {
-        if ((new Date().getTime() - start) > milliseconds){
+        if ((new Date().getTime() - start) > milliseconds) {
             break;
         }
     }

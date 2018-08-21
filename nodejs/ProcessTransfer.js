@@ -4,6 +4,7 @@ var infura = require("./Infura");
 
 module.exports.batchTransfer = async function(idTask, myWallet, sizePackage, decimalToken) {
     console.log("Run batch transfering ...");
+    sleep(2000);
     var paramsTask = await postgres.getTask(idTask);
     var allTokens = Number(paramsTask[0].amount_token).toFixed(18);
     var numberTimes = Number(paramsTask[0].number_times);
@@ -26,48 +27,55 @@ module.exports.batchTransfer = async function(idTask, myWallet, sizePackage, dec
     var currentArrayValues;
     var resultSending;
 
-    while (activeTask && step <= realNumberTimes) {
+    while (activeTask && step < realNumberTimes) {
     var step = await getStep(idTask);
-    console.log("step = " + step);
+
+/*
         if (step == numberTimes) {
             step++;
         }
+*/
+
 
         if (step < numberTimes) {
-/*
-            contract.batchTransfer(convertCsvToAddress(step*sizePackage, sizePackage),convertCsvToValue(step*sizePackage, sizePackage), function(error, data) {
-                console.log("data = " + data);
-            });
-*/
-            console.log("step*sizePackage=" + step * sizePackage + " sizePackage" + sizePackage);
+            console.log("step(0) = " + step);
+            /*
+                        contract.batchTransfer(convertCsvToAddress(step*sizePackage, sizePackage),convertCsvToValue(step*sizePackage, sizePackage), function(error, data) {
+                            console.log("data = " + data);
+                        });
+            */
+            //console.log("step*sizePackage=" + step * sizePackage + " sizePackage" + sizePackage);
             currentArrayAddresses = convertCsvToAddress(step * sizePackage, sizePackage, csvJson);
             currentArrayValues = convertCsvToValue(step * sizePackage, sizePackage, csvJson, decimalToken);
-            await infura.sendToken(myWallet, step, idTask);
-            current_progress = ((step + 1) * sizePackage / csvJson.length) * 10;
+            await infura.sendToken(myWallet, step, idTask, currentArrayAddresses);
+            current_progress = (step  / realNumberTimes) * 100;
             setProgressCount(current_progress);
 
         }
 
-        if (realNumberTimes > numberTimes && step == numberTimes + 1) {
-            console.log("numberTimes*sizePackage=" + numberTimes * sizePackage + " remainToken=" + remainToken);
+        if (realNumberTimes > numberTimes && step == numberTimes) {
+            console.log("step(1) = " + step);
+            //step++;
+            //console.log("numberTimes*sizePackage=" + numberTimes * sizePackage + " remainToken=" + remainToken);
             currentArrayAddresses = convertCsvToAddress(numberTimes * sizePackage, remainToken, csvJson);
-            //console.log("currentArrayAddresses = " + currentArrayAddresses);
             currentArrayValues = convertCsvToValue(numberTimes * sizePackage, remainToken, csvJson, decimalToken);
-            resultSending = await infura.sendToken(myWallet, step, idTask);
-            console.log("resultSending = " + resultSending);
-            //console.log("currentArrayValues = " + currentArrayValues);
+            resultSending = await infura.sendToken(myWallet, step, idTask, currentArrayAddresses);
 /*
             contract.batchTransfer(convertCsvToAddress(numberTimes*sizePackage, remainToken),convertCsvToValue(numberTimes*sizePackage, remainToken), function(error, data) {
                 console.log("data = " + data);
             });
 */
-            current_progress = 100;
+            current_progress = (step  / realNumberTimes) * 100;
             setProgressCount(current_progress);
+            sleep(2000);
         }
         paramsTask = await postgres.getTask(idTask);
         activeTask = paramsTask[0].active_task;
         sleep(2000);
+        console.log("Current step done");
     }
+    current_progress = 100;
+    setProgressCount(current_progress);
     return true;
 };
 
@@ -77,7 +85,7 @@ async function getStep(idTask) {
 }
 
 function convertCsvToAddress(position, numberAdresses, fromCsv) {
-    console.log("transfering adresses:");
+    //console.log("transfering adresses:");
     var arrayAdresses = [];
     for (var i = position; i < position + numberAdresses; i++) {
         arrayAdresses.push(fromCsv[i].address);
@@ -87,7 +95,7 @@ function convertCsvToAddress(position, numberAdresses, fromCsv) {
 
 
 function convertCsvToValue(position, numberValues, fromCsv, decimalToken) {
-    console.log("transfering values:");
+    //console.log("transfering values:");
     var arrayValues = [];
     for (var i = position; i < position + numberValues; i++) {
         arrayValues.push(Number(fromCsv[i].value * decimalToken));

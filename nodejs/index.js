@@ -20,7 +20,10 @@ var decimalToken = 1e18;
     //var fromFile = await fp.readFile("./distribution.csv", idTask, sizePackage);
 
     await postgres.deleteTrasferHistory(idTask);
+    await postgres.setEnableTask(idTask, true);
     var result = await processTransfer.batchTransfer(idTask, myWallet, sizePackage, decimalToken);
-    //console.log("result transfer = " + result)
+    console.log("result = " + result);
+    await postgres.setEnableTask(idTask, false);
+    console.log("Work is done ...");
 
 })();

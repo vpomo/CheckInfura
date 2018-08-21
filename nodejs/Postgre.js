@@ -98,7 +98,7 @@ module.exports.putTransferHistory = function (amountTokens, numberTimes, idTask,
 
 module.exports.getCountTimes  = async function(idTask) {
         var result;
-        console.log("Count task times ...");
+        //console.log("Count task times ...");
         await
         db.any("SELECT COUNT(*) FROM transfer_history where id_task = $1", [idTask])
             .then(data => {
@@ -111,7 +111,7 @@ module.exports.getCountTimes  = async function(idTask) {
 };
 
 module.exports.getTask  = async function(idTask) {
-    console.log("Get task ...");
+    //console.log("Get task ...");
     var result;
     await
     db.any("SELECT from_csv, id_task, put_date, number_times, real_number_times, count_address, amount_token, active_task, remain_token FROM task_data where id_task = $1", [idTask])
@@ -138,6 +138,17 @@ module.exports.deleteTrasferHistory  = async function(idTask) {
     return result;
 };
 
+module.exports.setEnableTask = async function (idTask, status) {
+    var result;
+    console.log("Update status task ...");
+    await
+    db.any("UPDATE task_data set active_task = $2 where id_task = $1", [idTask, status])
+        .then(data => {
+    })
+    .catch(error => {
+            console.log('ERROR:', error); // print error;
+    });
+}
 
 /*
 
