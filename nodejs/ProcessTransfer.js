@@ -39,18 +39,13 @@ module.exports.batchTransfer = async function(idTask, myWallet, sizePackage, dec
                 console.log("data = " + data);
             });
 */
-            resultSending = await postgres.getPendingStatusTask(idTask);
-            console.log("resultSending = " + resultSending);
-            if (resultSending == null ) {
-                console.log("step*sizePackage=" + step * sizePackage + " sizePackage" + sizePackage);
-                currentArrayAddresses = convertCsvToAddress(step * sizePackage, sizePackage, csvJson);
-                currentArrayValues = convertCsvToValue(step * sizePackage, sizePackage, csvJson, decimalToken);
-                await infura.sendToken(myWallet, step, idTask);
-                current_progress = ((step + 1) * sizePackage / csvJson.length) * 10;
-                setProgressCount(current_progress);
+            console.log("step*sizePackage=" + step * sizePackage + " sizePackage" + sizePackage);
+            currentArrayAddresses = convertCsvToAddress(step * sizePackage, sizePackage, csvJson);
+            currentArrayValues = convertCsvToValue(step * sizePackage, sizePackage, csvJson, decimalToken);
+            await infura.sendToken(myWallet, step, idTask);
+            current_progress = ((step + 1) * sizePackage / csvJson.length) * 10;
+            setProgressCount(current_progress);
 
-                step++;
-            }
         }
 
         if (realNumberTimes > numberTimes && step == numberTimes + 1) {
