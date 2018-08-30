@@ -9,7 +9,7 @@ module.exports.batchTransfer = async function(idTask, myWallet, sizePackage, dec
     var allTokens = Number(paramsTask[0].amount_token).toFixed(18);
     var numberTimes = Number(paramsTask[0].number_times);
     var realNumberTimes = Number(paramsTask[0].real_number_times);
-    var remainToken = Number(paramsTask[0].remain_token);
+    var remainToken = Number(paramsTask[0].remain_number);
     var activeTask = paramsTask[0].active_task;
     var current_progress = 0;
 

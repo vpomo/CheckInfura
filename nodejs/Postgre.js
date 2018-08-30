@@ -30,7 +30,7 @@ module.exports.putCsvFromFile = async function (csvData, idTask, sizePackage) {
         realNumberTimes = Number(numberTimes);
     }
     await
-    db.any("INSERT INTO task_data(from_csv, id_task, put_date, number_times, count_address, amount_token, active_task, real_number_times, remain_token) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9)",
+    db.any("INSERT INTO task_data(from_csv, id_task, put_date, number_times, count_address, amount_token, active_task, real_number_times, remain_number) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9)",
         [JSON.stringify(csvData), idTask, currentDate, numberTimes, csvData.length, sentTokens, false, realNumberTimes, remain])
         .then(data => {
         //console.log(data.id_task_data); //
@@ -114,7 +114,7 @@ module.exports.getTask  = async function(idTask) {
     //console.log("Get task ...");
     var result;
     await
-    db.any("SELECT from_csv, id_task, put_date, number_times, real_number_times, count_address, amount_token, active_task, remain_token FROM task_data where id_task = $1", [idTask])
+    db.any("SELECT from_csv, id_task, put_date, number_times, real_number_times, count_address, amount_token, active_task, remain_number FROM task_data where id_task = $1", [idTask])
         .then(data => {
         result = data;
     })
