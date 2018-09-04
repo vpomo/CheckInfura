@@ -68,6 +68,19 @@ module.exports.setPendingStatusTask = async function (idTask, txHash) {
         });
 }
 
+module.exports.setStatusTaskHistory = async function (idTask, status) {
+    var result;
+    console.log("Update status for task_history ...");
+    console.log("status = " + status);
+    await
+    db.any("UPDATE task_history set status = $2 where id_task = $1", [idTask, status])
+        .then(data => {
+        })
+        .catch(error => {
+                console.log('ERROR:', error); // print error;
+        });
+}
+
 module.exports.getPendingStatusTask = async function (idTask) {
     var result;
     console.log("Get pending status ...");

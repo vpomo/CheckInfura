@@ -17,7 +17,6 @@ module.exports.readCsvFile = function (nameFile, idTask, sizePackage) {
             //do something wiht csvData
             //console.log(csvData);
             postgres.putCsvFromFile(csvData,idTask, sizePackage);
-
             resultParse = csvData;
         });
 }
