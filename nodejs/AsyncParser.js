@@ -4,8 +4,9 @@ var fs = require('fs');
 var parse = require('csv-parse');
 var csv = require("csvtojson");
 
-module.exports.readCsvFile = function (nameFile, idTask, sizePackage) {
+module.exports.readCsvFile = function (nameFile, idTask, sizePackage, idWallet) {
     var csvData = [];
+    console.log("readCsvFile[idWallet]-1 = " + idWallet);
     fs.createReadStream(nameFile)
         .pipe(parse({delimiter: ','}))
         .on('data', function (csvrow) {
@@ -15,16 +16,16 @@ module.exports.readCsvFile = function (nameFile, idTask, sizePackage) {
         })
         .on('end', function () {
             //do something wiht csvData
-            //console.log(csvData);
-            postgres.putCsvFromFile(csvData,idTask, sizePackage);
+            console.log("readCsvFile[idWallet]-2 = " + idWallet);
+            postgres.putCsvFromFile(csvData,idTask, sizePackage, idWallet);
             resultParse = csvData;
         });
 }
 
-module.exports.readFile = async function (nameFile, idTask, sizePackage) {
+module.exports.readFile = async function (nameFile, idTask, sizePackage, idWallet) {
 	console.log("Start parsing csv-file ...");
     var csvData = await csv().fromFile(nameFile);
-    postgres.putCsvFromFile(csvData,idTask, sizePackage);
+    postgres.putCsvFromFile(csvData,idTask, sizePackage, idWallet);
 }
 
 module.exports.readStream = async function (nameStream) {

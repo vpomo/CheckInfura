@@ -10,7 +10,7 @@ const config = {
 };
 var db = pgp(config);
 
-module.exports.putCsvFromFile = async function (csvData, idTask, sizePackage) {
+module.exports.putCsvFromFile = async function (csvData, idTask, sizePackage, idWallet) {
     var currentDate = new Date();
     var numberTimes;
     var remain;
@@ -20,6 +20,8 @@ module.exports.putCsvFromFile = async function (csvData, idTask, sizePackage) {
     var sentTokens = getAmountTokens(csvData);
 
     console.log("Put data from csv-file ...");
+    console.log("Param[idWallet] = " + idWallet);
+
     fromCsv = csvData;
     numberTimes = roundLessToPackage(fromCsv.length, sizePackage) / sizePackage;
     remain = csvData.length - roundLessToPackage(fromCsv.length, sizePackage);
@@ -30,8 +32,8 @@ module.exports.putCsvFromFile = async function (csvData, idTask, sizePackage) {
         realNumberTimes = Number(numberTimes);
     }
     await
-    db.any("INSERT INTO task_data(from_csv, id_task, put_date, number_times, count_address, amount_token, active_task, real_number_times, remain_number) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9)",
-        [JSON.stringify(csvData), idTask, currentDate, numberTimes, csvData.length, sentTokens, false, realNumberTimes, remain])
+    db.any("INSERT INTO task_data(from_csv, id_task, put_date, number_times, count_address, amount_token, active_task, real_number_times, remain_number, id_wordpress) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)",
+        [JSON.stringify(csvData), idTask, currentDate, numberTimes, csvData.length, sentTokens, false, realNumberTimes, remain, idWallet])
         .then(data => {
         //console.log(data.id_task_data); //
     })

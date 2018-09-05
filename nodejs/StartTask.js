@@ -20,14 +20,14 @@ var myWallet = process.argv[3];;
 (async () => {
 console.log("idTask = " + idTask);
 console.log("myWallet = " + myWallet);
-/*
-    await postgres.deleteTrasferHistory(idTask);
+
+    //await postgres.deleteTrasferHistory(idTask);
 
     await postgres.setEnableTask(idTask, true);
     var result = await processTransfer.batchTransfer(idTask, myWallet, sizePackage, decimalToken);
     console.log("result = " + result);
     await postgres.setEnableTask(idTask, false);
     console.log("Work is done ...");
-*/
+
 
 })();
