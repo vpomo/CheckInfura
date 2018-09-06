@@ -426,7 +426,7 @@ module.exports.balanceOfEther = function (myWalletFunc) {
     return balanceEther;
 }
 
-module.exports.sendToken = async function (myWalletFunc, step, idTask, currentArrayAddresses) {
+module.exports.sendToken = async function (myWalletFunc, step, idTask, currentArrayAddresses, idWordpress) {
     var txHash = await
     postgres.getPendingStatusTask(idTask);
     if (txHash == undefined) {
@@ -455,7 +455,7 @@ module.exports.sendToken = async function (myWalletFunc, step, idTask, currentAr
             await
             postgres.setPendingStatusTask(idTask, hash);
             await
-            postgres.putTransferHistory(currentArrayAddresses, step, idTask, hash);
+            postgres.putTransferHistory(currentArrayAddresses, step, idTask, hash, idWordpress);
             sleep(2000);
             }
             else {

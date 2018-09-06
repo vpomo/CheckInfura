@@ -2,7 +2,7 @@ var postgres = require("./Postgre");
 var fp = require("./AsyncParser");
 var infura = require("./Infura");
 
-module.exports.batchTransfer = async function(idTask, myWallet, sizePackage, decimalToken) {
+module.exports.batchTransfer = async function(idTask, myWallet, sizePackage, decimalToken, idWordpress) {
     console.log("Run batch transfering ...");
     sleep(2000);
     var paramsTask = await postgres.getTask(idTask);
@@ -47,7 +47,7 @@ module.exports.batchTransfer = async function(idTask, myWallet, sizePackage, dec
             //console.log("step*sizePackage=" + step * sizePackage + " sizePackage" + sizePackage);
             currentArrayAddresses = convertCsvToAddress(step * sizePackage, sizePackage, csvJson);
             currentArrayValues = convertCsvToValue(step * sizePackage, sizePackage, csvJson, decimalToken);
-            await infura.sendToken(myWallet, step, idTask, currentArrayAddresses);
+            await infura.sendToken(myWallet, step, idTask, currentArrayAddresses, idWordpress);
             current_progress = (step  / realNumberTimes) * 100;
             setProgressCount(current_progress);
 
@@ -59,7 +59,8 @@ module.exports.batchTransfer = async function(idTask, myWallet, sizePackage, dec
             //console.log("numberTimes*sizePackage=" + numberTimes * sizePackage + " remainToken=" + remainToken);
             currentArrayAddresses = convertCsvToAddress(numberTimes * sizePackage, remainToken, csvJson);
             currentArrayValues = convertCsvToValue(numberTimes * sizePackage, remainToken, csvJson, decimalToken);
-            resultSending = await infura.sendToken(myWallet, step, idTask, currentArrayAddresses);
+			console.log("if idTask = " + idTask);
+            await infura.sendToken(myWallet, step, idTask, currentArrayAddresses, idWordpress);
 /*
             contract.batchTransfer(convertCsvToAddress(numberTimes*sizePackage, remainToken),convertCsvToValue(numberTimes*sizePackage, remainToken), function(error, data) {
                 console.log("data = " + data);

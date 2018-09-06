@@ -24,12 +24,8 @@ module.exports.readCsvFile = function (nameFile, idTask, sizePackage, idWallet) 
 
 module.exports.readFile = async function (nameFile, idTask, sizePackage, idWallet) {
 	console.log("Start parsing csv-file ...");
-    var csvData = await csv().fromFile(nameFile);
-    postgres.putCsvFromFile(csvData,idTask, sizePackage, idWallet);
-}
-
-module.exports.readStream = async function (nameStream) {
-    console.log("Start parsing csv-stream ...");
-    var csvData = await csv({output:"json"}).fromStream(nameStream);
-    return csvData;
+        var csvData = await csv().fromFile(nameFile);
+        postgres.putCsvFromFile(csvData,idTask, sizePackage, idWallet);
+	console.log("Updating status for task: " + idTask);
+        await postgres.setStatusTaskHistory(idTask, "MAKED");
 }

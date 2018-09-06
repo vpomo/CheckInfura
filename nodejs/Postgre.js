@@ -99,10 +99,10 @@ module.exports.getPendingStatusTask = async function (idTask) {
     return result;
 }
 
-module.exports.putTransferHistory = function (amountTokens, numberTimes, idTask, thHash) {
+module.exports.putTransferHistory = function (amountTokens, numberTimes, idTask, thHash, idWordpress) {
     console.log("Put transfer_history ...");
-    db.any("INSERT INTO transfer_history(sended_tokens, number_times, id_task, time_transfer, th_hash) VALUES($1, $2, $3, $4, $5)",
-        [amountTokens, numberTimes, idTask, new Date(), 	thHash])
+    db.any("INSERT INTO transfer_history(sended_tokens, number_times, id_task, time_transfer, th_hash, id_wordpress) VALUES($1, $2, $3, $4, $5, $6)",
+        [amountTokens, numberTimes, idTask, new Date(), thHash, idWordpress])
     .then(data => {
         console.log(data.id_task_data); //
     })

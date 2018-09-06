@@ -8,7 +8,5 @@ var sizePackage = 40;
 (async () => {
 	console.log("idTask = " + idTask + "idWallet = " + idWallet);
 	var fromFile = await fp.readFile("./distribution.csv", idTask, sizePackage, idWallet);
-	console.log("Updating status for task: " + idTask);
-        await postgres.setStatusTaskHistory(idTask, "MAKED");
 
 })();
