@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <title>Raspberry</title>
-    <script src="js/jquery-3.3.1.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="js/jquery.csv.min.js"></script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css">
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
@@ -34,6 +34,9 @@
                             <p></p>
                             <button class="btn btn-primary btn-sm" id="byTokens" onclick="createWallet();">Создать кошелек</button>
                             <p></p>
+                            <p></p>
+                            <button class="btn btn-primary btn-sm" id="byTokens" onclick="createTask();">Создать задание на передачу токенов</button>
+                            <p></p>
 
                         </div>
                     </div>
@@ -43,7 +46,7 @@
                     <div class="card" style="width: 18rem;">
                         <div class="card-body">
                             <p></p>
-                            <button class="btn btn-primary btn-sm" id="claimTokens" onclick="claimTokens();">Claim token</button>
+                            <button class="btn btn-primary btn-sm" id="claimTokens" onclick="getTaskHistory();">Получить список заданий</button>
                             <p></p>
                         </div>
                     </div>
